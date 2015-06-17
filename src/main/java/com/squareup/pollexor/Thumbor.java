@@ -6,54 +6,49 @@ package com.squareup.pollexor;
  * installation.
  */
 public final class Thumbor {
-  /**
-   * Create a new instance for the specified host.
-   *
-   * @see #create(String, String)
-   */
-  public static Thumbor create(String host) {
-    return new Thumbor(host, null);
-  }
-
-  /**
-   * Create a new instance for the specified host and encryption key.
-   *
-   * @see #create(String)
-   */
-  public static Thumbor create(String host, String key) {
-    if (key == null || key.length() == 0) {
-      throw new IllegalArgumentException("Key must not be blank.");
+    /**
+     * Create a new instance for the specified host.
+     *
+     * @see #create(String)
+     */
+    public static Thumbor create() {
+        return new Thumbor(null);
     }
-    return new Thumbor(host, key);
-  }
 
-  private final String host;
-  private final String key;
+    /**
+     * Create a new instance for the specified host and encryption key.
+     *
+     * @see #create(String)
+     */
 
-  private Thumbor(String host, String key) {
-    if (host == null || host.length() == 0) {
-      throw new IllegalArgumentException("Host must not be blank.");
+    public static Thumbor create(String key) {
+        if (key == null || key.length() == 0) {
+            throw new IllegalArgumentException("Key must not be blank.");
+        }
+        return new Thumbor(key);
     }
-    if (!host.endsWith("/")) {
-      host += "/";
+
+    private final String key;
+
+    private Thumbor(String key) {
+        this.key = key;
     }
-    this.host = host;
-    this.key = key;
-  }
 
-  public String getHost() {
-    return host;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  /** Begin building a url for this host with the specified image. */
-  public ThumborUrlBuilder buildImage(String image) {
-    if (image == null || image.length() == 0) {
-      throw new IllegalArgumentException("Invalid image.");
+    public String getKey() {
+        return key;
     }
-    return new ThumborUrlBuilder(host, key, image);
-  }
+
+    /**
+     * Begin building a url for this host with the specified image.
+     */
+    public ThumborUrlBuilder buildImage(String image) {
+        if (image == null || image.length() == 0 || !image.contains("http")) {
+            throw new IllegalArgumentException("Invalid image.");
+        }
+        if (image.contains("?")) {
+            //丢弃所有参数
+            image = image.substring(0, image.indexOf("?"));
+        }
+        return new ThumborUrlBuilder(key, image);
+    }
 }

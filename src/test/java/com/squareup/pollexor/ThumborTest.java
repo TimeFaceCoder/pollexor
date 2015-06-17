@@ -8,13 +8,13 @@ import static org.fest.assertions.api.Assertions.fail;
 public class ThumborTest {
   @Test public void testCannotAddInvalidKey() {
     try {
-      Thumbor.create("http://example.com", null);
+      Thumbor.create(null);
       fail("Bad key string allowed.");
     } catch (IllegalArgumentException expected) {
     }
 
     try {
-      Thumbor.create("http://example.com", "");
+      Thumbor.create("");
       fail("Bad key string allowed.");
     } catch (IllegalArgumentException expected) {
     }
@@ -50,11 +50,4 @@ public class ThumborTest {
     }
   }
 
-  @Test public void testHostAlwaysEndsWithSlash() {
-    Thumbor t1 = Thumbor.create("http://me.com");
-    assertThat(t1.getHost()).isEqualTo("http://me.com/");
-
-    Thumbor t2 = Thumbor.create("http://me.com");
-    assertThat(t2.getHost()).isEqualTo("http://me.com/");
-  }
 }

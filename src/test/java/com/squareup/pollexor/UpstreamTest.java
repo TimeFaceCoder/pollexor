@@ -12,7 +12,7 @@ public class UpstreamTest {
   private static final String KEY = "my-security-key";
 
   private static ThumborUrlBuilder url() {
-    return Thumbor.create("/", KEY).buildImage(IMG);
+    return Thumbor.create( KEY).buildImage(IMG);
   }
 
   @Test public void matchingSignature() {

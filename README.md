@@ -7,28 +7,6 @@ in an expressive fashion using a fluent API.
 This library is also fully compatible with the Android platform.
 
 
-
-Download
---------
-
-Download [the latest JAR][2] or grab via Maven:
-
-```xml
-<dependency>
-  <groupId>com.squareup</groupId>
-  <artifactId>pollexor</artifactId>
-  <version>2.0.2</version>
-</dependency>
-```
-or Gradle:
-```groovy
-compile 'com.squareup:pollexor:2.0.2'
-```
-
-Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
-
-
-
 Examples
 --------
 

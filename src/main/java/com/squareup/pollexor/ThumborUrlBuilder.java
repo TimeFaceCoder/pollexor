@@ -1,6 +1,9 @@
 // Copyright 2012 Square, Inc.
 package com.squareup.pollexor;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +90,6 @@ public final class ThumborUrlBuilder {
   }
 
   final String image;
-  final String host;
   final String key;
   boolean hasCrop;
   boolean hasResize;
@@ -109,8 +111,7 @@ public final class ThumborUrlBuilder {
   TrimPixelColor trimPixelColor;
   List<String> filters;
 
-  ThumborUrlBuilder(String host, String key, String image) {
-    this.host = host;
+  ThumborUrlBuilder(String key, String image) {
     this.key = key;
     this.image = image;
   }
@@ -355,7 +356,12 @@ public final class ThumborUrlBuilder {
 
   /** Build an unsafe version of the URL. */
   public String toUrlUnsafe() {
-    return host + PREFIX_UNSAFE + assembleConfig(false);
+    try {
+      return image + "?image=" + URLEncoder.encode(PREFIX_UNSAFE + assembleConfig(false), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   /**
@@ -373,7 +379,12 @@ public final class ThumborUrlBuilder {
     String encoded = base64Encode(encrypted);
 
     CharSequence suffix = legacy ? image : config;
-    return host + encoded + "/" + suffix;
+    try {
+      return image + "?image="  + URLEncoder.encode(encoded + "/" + suffix, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   /**
@@ -386,7 +397,12 @@ public final class ThumborUrlBuilder {
 
   /** Build an unsafe version of the metadata URL. */
   public String toMetaUnsafe() {
-    return host + assembleConfig(true);
+    try {
+      return image + "?image="  + URLEncoder.encode(assembleConfig(true).toString(), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   /**
@@ -397,7 +413,12 @@ public final class ThumborUrlBuilder {
     byte[] encrypted = hmacSha1(config, key);
     String encoded = base64Encode(encrypted);
 
-    return host + encoded + "/" + config;
+    try {
+      return image + "?image="  + URLEncoder.encode(encoded + "/" + config, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   @Override public String toString() {
@@ -472,7 +493,7 @@ public final class ThumborUrlBuilder {
       builder.append("/");
     }
 
-    builder.append(isLegacy ? md5(image) : image);
+//    builder.append(isLegacy ? md5(image) : image);
 
     return builder;
   }

@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import com.squareup.pollexor.ThumborUrlBuilder.TrimPixelColor;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import static com.squareup.pollexor.ThumborUrlBuilder.HorizontalAlign.CENTER;
 import static com.squareup.pollexor.ThumborUrlBuilder.VerticalAlign.MIDDLE;
 import static com.squareup.pollexor.ThumborUrlBuilder.brightness;
@@ -25,21 +28,21 @@ import static org.fest.assertions.api.Assertions.fail;
 
 public class ThumborUrlBuilderTest {
 
-  private final Thumbor unsafe = Thumbor.create("/");
-  private final Thumbor safe = Thumbor.create("/", "test");
+  private final Thumbor unsafe = Thumbor.create();
+  private final Thumbor safe = Thumbor.create("test");
 
-  @Test public void testNoConfig() {
+  @Test public void testNoConfig() throws UnsupportedEncodingException {
     assertThat(unsafe.buildImage("http://a.com/b.png").toUrl()) //
-        .isEqualTo("/unsafe/http://a.com/b.png");
+        .isEqualTo("http://a.com/b.png?image=" + URLEncoder.encode("unsafe/", "UTF-8"));
   }
 
   @Test public void testComplexUnsafeBuild() {
-    String expected = "/unsafe/10x10:90x90/40x40/filters:watermark(/unsafe/20x20/b.com/c.jpg,10,10,0):round_corner(5,255,255,255)/a.com/b.png";
-    String actual = unsafe.buildImage("a.com/b.png")
+    String expected = "/unsafe/10x10:90x90/40x40/filters:watermark(/unsafe/20x20/b.com/c.jpg,10,10,0):round_corner(5,255,255,255)/";
+    String actual = unsafe.buildImage("http://a.com/b.png")
         .crop(10, 10, 90, 90)
         .resize(40, 40)
         .filter(
-            watermark(unsafe.buildImage("b.com/c.jpg").resize(20, 20), 10, 10),
+            watermark(unsafe.buildImage("http://b.com/c.jpg").resize(20, 20), 10, 10),
             roundCorner(5))
         .toUrl();
     assertThat(actual).isEqualTo(expected);
@@ -139,8 +142,8 @@ public class ThumborUrlBuilderTest {
     assertThat(image3.toUrl()).isEqualTo("/unsafe/-10x-5/a.com/b.png");
   }
 
-  @Test public void testCrop() {
-    ThumborUrlBuilder image = unsafe.buildImage("a.com/b.png");
+  @Test public void testCrop() throws UnsupportedEncodingException {
+    ThumborUrlBuilder image = unsafe.buildImage("http://a.com/b.png");
     assertThat(image.hasCrop).isFalse();
 
     image.crop(1, 2, 3, 4);
@@ -149,17 +152,17 @@ public class ThumborUrlBuilderTest {
     assertThat(image.cropLeft).isEqualTo(2);
     assertThat(image.cropBottom).isEqualTo(3);
     assertThat(image.cropRight).isEqualTo(4);
-    assertThat(image.toUrl()).isEqualTo("/unsafe/2x1:4x3/a.com/b.png");
+    assertThat(image.toUrl()).isEqualTo("http://a.com/b.png?image=" + URLEncoder.encode("unsafe/2x1:4x3/", "UTF-8"));
   }
 
-  @Test public void testResizeAndSmart() {
+  @Test public void testResizeAndSmart() throws UnsupportedEncodingException {
     ThumborUrlBuilder image = unsafe.buildImage("http://a.com/b.png");
     image.resize(10, 5);
 
     assertThat(image.isSmart).isFalse();
     image.smart();
     assertThat(image.isSmart).isTrue();
-    assertThat(image.toUrl()).isEqualTo("/unsafe/10x5/smart/http://a.com/b.png");
+    assertThat(image.toUrl()).isEqualTo("http://a.com/b.png?image=" + URLEncoder.encode("unsafe/10x5/smart/", "UTF-8"));
   }
 
   @Test public void testCannotFlipHorizontalWithoutResize() {
@@ -220,14 +223,14 @@ public class ThumborUrlBuilderTest {
     assertThat(image.cropVerticalAlign).isEqualTo(MIDDLE);
   }
 
-  @Test public void testTrim() {
+  @Test public void testTrim() throws UnsupportedEncodingException {
     ThumborUrlBuilder image = unsafe.buildImage("http://a.com/b.png");
     assertThat(image.isTrim).isFalse();
     image.trim(TrimPixelColor.TOP_LEFT, 100);
     assertThat(image.isTrim).isTrue();
     assertThat(image.trimPixelColor).isEqualTo(TrimPixelColor.TOP_LEFT);
     assertThat(image.trimColorTolerance).isEqualTo(100);
-    assertThat(image.toUrl()).isEqualTo("/unsafe/trim:top-left:100/http://a.com/b.png");
+    assertThat(image.toUrl()).isEqualTo("http://a.com/b.png?image=" + URLEncoder.encode("unsafe/trim:top-left:100/", "UTF-8"));
   }
 
   @Test public void testCannotAlignWithoutResize() {
