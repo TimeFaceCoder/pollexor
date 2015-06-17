@@ -6,37 +6,40 @@ in an expressive fashion using a fluent API.
 
 This library is also fully compatible with the Android platform.
 
+Thanks for Square.
+
+I change the url params style, because TimeFace's Thumbor image service change the original params style to  http://the/path/to/the/image.jpg?image=URLEncoder.encode("original/params/whithout/image/path/") .
 
 Examples
 --------
 
 ```java
 // Without encryption:
-Thumbor thumbor = Thumbor.create("http://example.com/");
+Thumbor thumbor = Thumbor.create();
 
 // With encryption:
-Thumbor thumbor = Thumbor.create("http://example.com/", "key");
+Thumbor thumbor = Thumbor.create("key");
 ```
 
 ```java
 thumbor.buildImage("http://example.com/image.png")
     .resize(48, 48)
     .toUrl()
-// Produces: /unsafe/48x48/example.com/image.png
+// Produces: http://example.com/image.png?image=URLEncoder.encode("unsafe/48x48/", "UTF-8")
 
 thumbor.buildImage("http://example.com/image.png")
     .crop(10, 10, 90, 90)
     .resize(40, 40)
     .smart()
     .toUrl()
-// Produces: /unsafe/10x10:90x90/smart/40x40/example.com/image.png
+// Produces: http://example.com/image.png?image=URLEncoder.encode("unsafe/10x10:90x90/smart/40x40/", "UTF-8")
 
 thumbor.buildImage("http://example.com/image.png")
     .crop(5, 5, 195, 195)
     .resize(95, 95)
     .align(BOTTOM, RIGHT)
     .toUrl()
-// Produces: /unsafe/5x5:195x195/right/bottom/95x95/example.com/image.png
+// Produces: http://example.com/image.png?image=URLEncoder.encode("unsafe/5x5:195x195/right/bottom/95x95/", "UTF-8")
 
 thumbor.buildImage("http://example.com/background.png")
     .resize(200, 100)
@@ -47,32 +50,15 @@ thumbor.buildImage("http://example.com/background.png")
         quality(85)
     )
     .toUrl()
-// Produces: /unsafe/200x100/filters:round_corner(10,255,255,255):watermark(/unsafe/200x100/example.com/overlay1.png,0,0,0):watermark(/unsafe/50x50/example.com/overlay2.png,75,25,0):quality(85)/example.com/background.png
+// Produces: http://example.com/image.png?image=URLEncoder.encode("unsafe/200x100/filters:round_corner(10,255,255,255):watermark(http://example.com/overlay1.png?image=URLEncoder.encode("unsafe/200x100/", "UTF-8"),0,0,0):watermark(http://example.com/overlay2.png?image=URLEncoder.encode("unsafe/50x50/","UTF-8"),75,25,0):quality(85)/", "UTF-8")
 ```
 
 *Note:* If you are using a version of Thumbor older than 3.0 you must call
 `legacy()` to ensure the encryption used will be supported by the server.
 
 
-
-License
-=======
-
-    Copyright 2012 Square, Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
-
  [1]: https://github.com/globocom/thumbor
  [2]: https://search.maven.org/remote_content?g=com.squareup&a=pollexor&v=LATEST
+ [3]: http://square.github.io/pollexor/
+
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/
