@@ -8,7 +8,10 @@ This library is also fully compatible with the Android platform.
 
 Thanks for Square.
 
-I change the url params style, because TimeFace's Thumbor image service change the original params style to  http://the/path/to/the/image.jpg?image=URLEncoder.encode("original/params/whithout/image/path/") .
+I change the url params style, because TimeFace's Thumbor image service change the original params style to  
+
+> http://the/path/to/the/image.jpg?image=URLEncoder.encode("original/params/whithout/image/path/")
+> 
 
 Examples
 --------
